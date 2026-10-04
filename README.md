@@ -77,6 +77,27 @@ Businesses can buy clearly labelled sponsored placements (not an investment, no 
 - Live placements appear only for active, paid campaigns within their dates: landing (banner), Explore Services (one listing), Providers (featured brand), trader overview (announcement).
 - Package prices are illustrative draft pricing subject to administrator approval. Payments, invoices, creative uploads and ad delivery are simulated.
 
+## Progressive Web App
+
+The site can be installed as an app (Android, iPhone/iPad, Windows, macOS) and still works as a normal website.
+
+| File | Purpose |
+|---|---|
+| `public/manifest.webmanifest` | Name, colours, `display: standalone`, icons |
+| `public/icons/` | 192/512 icons, maskable icons, 180px `apple-touch-icon.png` (placeholder "TT" mark) |
+| `public/offline.html` | Self-contained page shown when a page cannot load offline |
+| `public/_headers` | Cloudflare Pages: `sw.js` and the manifest are always revalidated |
+| `src/pwa/sw.js` | Service worker source; `vite.config.js` stamps a build version into `dist/sw.js` |
+| `src/pwa/index.js` | Registration (production only), update detection, install prompt state (`usePwa()`) |
+| `src/pwa/PwaUi.jsx` | iOS / macOS Safari install instructions and the "new version available" notice |
+
+- **Caching** is an allowlist: only hashed `/assets/*` files and the offline page, manifest and icons. HTML pages, and any future API, auth, account, subscription, payment or download requests, are never cached; pages are network-first with the offline page as fallback.
+- **Updates:** each build produces a new `sw.js`. Browsers check it on every visit (and hourly when an installed app returns to the foreground); open tabs get a "Refresh" notice instead of a forced reload.
+- **Install entry points** appear only when the browser supports installing and the app is not already installed: user menu, public footer and landing footer.
+- **Push notifications:** `src/pwa/sw.js` already handles `push` and `notificationclick`; a backend with VAPID keys and a subscribe step is all that is missing (see the comment there).
+- **Real logo:** run `node scripts/generate-pwa-icons.mjs --logo path/to/logo.svg` (needs Chrome or Edge) to regenerate every icon.
+- The service worker is not registered in `npm run dev`; use `npm run build && npm run preview` to test it.
+
 ## What is simulated
 
 There is no backend. The following behave like the Laravel app but run entirely in the browser:

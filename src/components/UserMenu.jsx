@@ -1,6 +1,7 @@
 /* x-desktop-user-menu, plus two demo-only items for the static build. */
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../data/store';
+import { usePwa } from '../pwa';
 import { userInitials } from '../utils/format';
 import { useFeedback } from './Feedback';
 import { Dropdown, Icon, MenuItem, MenuSeparator } from './ui';
@@ -9,6 +10,7 @@ export function UserMenu() {
     const { user, actions } = useStore();
     const { confirm, toast } = useFeedback();
     const navigate = useNavigate();
+    const { installMethod, install } = usePwa();
     const ini = userInitials(user.name);
 
     return (
@@ -38,6 +40,11 @@ export function UserMenu() {
             <MenuItem href="/settings/profile" icon="cog-6-tooth">
                 Settings
             </MenuItem>
+            {installMethod && (
+                <MenuItem icon="arrow-down-tray" onClick={install}>
+                    Install Terpaling Trader
+                </MenuItem>
+            )}
             <MenuSeparator />
             <MenuItem
                 icon="arrow-path"

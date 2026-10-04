@@ -1,0 +1,10 @@
+# Cloudflare Pages response headers (ignored by other hosts).
+# The service worker and manifest must always be revalidated so that new
+# deployments reach installed apps.
+
+/sw.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: no-cache

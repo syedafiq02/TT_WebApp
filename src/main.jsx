@@ -4,8 +4,12 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { FeedbackProvider } from './components/Feedback';
 import { StoreProvider } from './data/store';
+import { registerServiceWorker } from './pwa';
+import { PwaUi } from './pwa/PwaUi';
 import './styles/app.css';
 import './styles/ai-support.css';
+
+registerServiceWorker();
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>
@@ -13,6 +17,7 @@ createRoot(document.getElementById('root')).render(
             <StoreProvider>
                 <FeedbackProvider>
                     <App />
+                    <PwaUi />
                 </FeedbackProvider>
             </StoreProvider>
         </BrowserRouter>

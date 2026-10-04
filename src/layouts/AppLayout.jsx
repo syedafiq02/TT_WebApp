@@ -123,7 +123,7 @@ export default function AppLayout({ area = 'customer' }) {
                 {mobileOpen && (
                     <div className="fixed inset-0 z-50 lg:hidden">
                         <div className="tt-anim-fade absolute inset-0 bg-zinc-900/30" onClick={() => setMobileOpen(false)} />
-                        <aside className="tt-anim-slide absolute inset-y-0 left-0 flex w-[260px] max-w-[85vw] flex-col overflow-y-auto border-e border-zinc-200 bg-white px-3 py-4">
+                        <aside className="tt-anim-slide absolute inset-y-0 left-0 flex w-[260px] max-w-[85vw] flex-col overflow-y-auto border-e border-zinc-200 bg-white pt-[max(1rem,env(safe-area-inset-top))] pr-3 pb-[max(1rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))]">
                             <div className="flex items-center justify-between px-2 pb-4">
                                 <AppLogo to={home} onClick={() => setMobileOpen(false)} />
                                 <button className="grid size-8 cursor-pointer place-items-center rounded-md text-zinc-500 hover:bg-zinc-100" onClick={() => setMobileOpen(false)} aria-label="Close sidebar">

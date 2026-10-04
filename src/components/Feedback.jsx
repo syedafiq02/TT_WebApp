@@ -33,7 +33,7 @@ export function FeedbackProvider({ children }) {
         <FeedbackContext.Provider value={{ toast, confirm }}>
             {children}
 
-            <div className="pointer-events-none fixed right-4 bottom-4 z-[70] grid w-[min(24rem,calc(100vw-2rem))] gap-2 max-sm:bottom-24" aria-live="polite">
+            <div className="pointer-events-none fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-[70] grid w-[min(24rem,calc(100vw-2rem))] gap-2 max-sm:bottom-24" aria-live="polite">
                 {toasts.map((t) => (
                     <div key={t.id} role="status" className="tt-anim-pop pointer-events-auto flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-4 text-sm font-medium text-zinc-800 shadow-lg">
                         <Icon

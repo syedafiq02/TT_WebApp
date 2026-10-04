@@ -12,6 +12,7 @@ import { planTermLabel, typeLabel } from '../data/enums';
 import { categoryById, children, cheapestPlan, providerById, providerServices, publicServices, rating, roots } from '../data/queries';
 import { useStore } from '../data/store';
 import { useTitle } from '../hooks/useTitle';
+import { usePwa } from '../pwa';
 import { initials, plural } from '../utils/format';
 import '../styles/landing.css';
 
@@ -82,6 +83,7 @@ function Logo() {
 export default function Landing() {
     useTitle(null);
     const { db, user } = useStore();
+    const { installMethod, install } = usePwa();
     const { hash } = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
@@ -954,6 +956,11 @@ export default function Landing() {
                                         Advertise
                                     </Link>
                                 </li>
+                                {installMethod && (
+                                    <li>
+                                        <button onClick={install}>Install app</button>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                         <div>

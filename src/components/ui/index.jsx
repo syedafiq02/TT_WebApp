@@ -458,7 +458,7 @@ export function Modal({ open, onClose, className, children, labelledBy }) {
     }, [open]);
     if (!open) return null;
     return createPortal(
-        <div className="fixed inset-0 z-[60] grid place-items-center overflow-y-auto p-4">
+        <div className="fixed inset-0 z-[60] grid place-items-center overflow-y-auto px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
             <div className="tt-anim-fade fixed inset-0 bg-zinc-900/40" onClick={onClose} />
             <div ref={panel} role="dialog" aria-modal="true" aria-labelledby={labelledBy} className={cx('tt-anim-pop relative w-full max-w-lg rounded-xl border border-zinc-200 bg-white p-6 shadow-xl sm:p-8', className)}>
                 <button onClick={onClose} className="absolute top-3 right-3 grid size-8 cursor-pointer place-items-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700" aria-label="Close">

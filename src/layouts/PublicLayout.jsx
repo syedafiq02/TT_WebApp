@@ -5,6 +5,7 @@ import { AiSupportWidget } from '../components/AiSupportWidget';
 import { AppLogo } from '../components/AppLogo';
 import { Button, Icon } from '../components/ui';
 import { useStore } from '../data/store';
+import { InstallAppButton } from '../pwa/PwaUi';
 import { cx } from '../utils/format';
 
 export default function PublicLayout() {
@@ -120,6 +121,7 @@ export default function PublicLayout() {
                             <Link to="/advertise" className="transition-colors hover:text-brand">
                                 Advertise
                             </Link>
+                            <InstallAppButton className="cursor-pointer transition-colors hover:text-brand" />
                         </nav>
                     </div>
                     <div className="grid gap-4 border-t border-zinc-100 pt-6">
