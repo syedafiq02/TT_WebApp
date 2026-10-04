@@ -79,8 +79,32 @@ export function SponsoredBanner({ ad, preview = false, className }) {
     );
 }
 
-/** Sponsored Listing — sits in a grid of product cards, same footprint as ServiceCard. */
-export function SponsoredListingCard({ ad, preview = false, className }) {
+/**
+ * Sponsored Listing — same footprint as ServiceCard. `horizontal` lays it out
+ * as a full-width strip, used under the Explore Services filters.
+ */
+export function SponsoredListingCard({ ad, preview = false, horizontal = false, className }) {
+    if (horizontal) {
+        return (
+            <article aria-label={`Sponsored: ${ad.company}`} className={cx('tt-card flex min-w-0 flex-col overflow-hidden border-amber-200 sm:flex-row', className)}>
+                <AdCreative ad={ad} className="h-28 shrink-0 border-b border-zinc-200 sm:h-auto sm:w-48 sm:border-r sm:border-b-0" />
+                <div className="flex min-w-0 flex-1 flex-col gap-4 p-5 sm:flex-row sm:items-center">
+                    <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <SponsoredLabel />
+                            <span className="truncate text-xs text-zinc-500">{AD_CATEGORIES[ad.category]}</span>
+                        </div>
+                        <h3 className="mt-2 text-[17px] leading-snug font-semibold text-zinc-900">{ad.company}</h3>
+                        <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-zinc-600">{ad.description}</p>
+                    </div>
+                    <AdLink ad={ad} preview={preview} className="shrink-0 rounded-lg border border-zinc-200 bg-white px-3.5 py-2 text-sm text-zinc-800 shadow-xs hover:bg-zinc-50">
+                        {ad.cta_label || 'Learn more'}
+                        <Icon name="arrow-top-right-on-square" variant="micro" className="size-4! text-zinc-400" />
+                    </AdLink>
+                </div>
+            </article>
+        );
+    }
     return (
         <article aria-label={`Sponsored: ${ad.company}`} className={cx('tt-card flex min-w-0 flex-col overflow-hidden border-amber-200', className)}>
             <AdCreative ad={ad} className="h-28 border-b border-zinc-200" />

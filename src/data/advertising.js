@@ -21,7 +21,7 @@ export const AD_PLACEMENTS = {
         label: 'Sponsored Listing',
         icon: 'list-bullet',
         description: 'A clearly labelled sponsored card inside a relevant product section. Suited to indicators, EAs, trading tools and services.',
-        where: 'Explore Services results',
+        where: 'Explore Services, below the search filters',
     },
     featured_brand: {
         label: 'Featured Brand',
