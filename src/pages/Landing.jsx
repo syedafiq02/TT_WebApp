@@ -5,6 +5,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logo from '../assets/logo.png';
 import { AiSupportWidget } from '../components/AiSupportWidget';
 import { SponsoredBanner } from '../components/sponsored';
 import { liveAds } from '../data/advertising';
@@ -57,13 +58,11 @@ function I({ n, className, style }) {
     return <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS[n] ?? '' }} />;
 }
 
-/* Temporary text placeholder until the final logo is supplied. */
+/* The white logo on a brand-coloured tile. */
 function Mark() {
     return (
-        <span className="mark">
-            <span className="mark-text" aria-hidden="true">
-                TT
-            </span>
+        <span className="mark" aria-hidden="true">
+            <img src={logo} alt="" draggable="false" />
         </span>
     );
 }

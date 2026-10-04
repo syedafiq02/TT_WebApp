@@ -84,7 +84,8 @@ The site can be installed as an app (Android, iPhone/iPad, Windows, macOS) and s
 | File | Purpose |
 |---|---|
 | `public/manifest.webmanifest` | Name, colours, `display: standalone`, icons |
-| `public/icons/` | 192/512 icons, maskable icons, 180px `apple-touch-icon.png` (placeholder "TT" mark) |
+| `public/icons/` | 192/512 icons, maskable icons, 180px `apple-touch-icon.png` (Terpaling Trader logo on the brand colour) |
+| `public/favicon.ico` | 16/32/48px favicon from the same logo |
 | `public/offline.html` | Self-contained page shown when a page cannot load offline |
 | `public/_headers` | Cloudflare Pages: `sw.js` and the manifest are always revalidated |
 | `src/pwa/sw.js` | Service worker source; `vite.config.js` stamps a build version into `dist/sw.js` |
@@ -95,7 +96,7 @@ The site can be installed as an app (Android, iPhone/iPad, Windows, macOS) and s
 - **Updates:** each build produces a new `sw.js`. Browsers check it on every visit (and hourly when an installed app returns to the foreground); open tabs get a "Refresh" notice instead of a forced reload.
 - **Install entry points** appear only when the browser supports installing and the app is not already installed: user menu, public footer and landing footer.
 - **Push notifications:** `src/pwa/sw.js` already handles `push` and `notificationclick`; a backend with VAPID keys and a subscribe step is all that is missing (see the comment there).
-- **Real logo:** run `node scripts/generate-pwa-icons.mjs --logo path/to/logo.svg` (needs Chrome or Edge) to regenerate every icon.
+- **Logo:** the master artwork is `brand/terpaling-trader-logo.png` (white on transparent); the UI uses `src/assets/logo.png` (the same artwork trimmed to its bounds). `node scripts/generate-pwa-icons.mjs` (needs Chrome or Edge) regenerates every icon and the favicon from it.
 - The service worker is not registered in `npm run dev`; use `npm run build && npm run preview` to test it.
 
 ## What is simulated

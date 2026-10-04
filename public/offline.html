@@ -51,11 +51,9 @@
                 height: 32px;
                 border-radius: 8px;
                 background: #2563eb;
-                color: #fff;
-                font-size: 11px;
-                font-weight: 700;
                 box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.12);
             }
+            .mark img { display: block; width: 24px; height: auto; }
             .name { font-size: 13.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
             .icon {
                 display: grid;
@@ -88,7 +86,7 @@
     <body>
         <main class="card">
             <div class="logo" aria-hidden="true">
-                <span class="mark">TT</span>
+                <span class="mark"><img src="data:image/png;base64,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" alt="" width="96" height="65" /></span>
                 <span class="name">Terpaling Trader</span>
             </div>
             <div class="icon" aria-hidden="true">

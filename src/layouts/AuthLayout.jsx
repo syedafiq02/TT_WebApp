@@ -38,7 +38,7 @@ export default function AuthLayout() {
 
                 <main className="flex flex-col items-center justify-center gap-6 px-4 py-10 sm:px-6">
                     <Link to="/" className="lg:hidden">
-                        <AppLogoIcon className="h-10 min-w-10 text-base" />
+                        <AppLogoIcon className="size-10" />
                         <span className="sr-only">Terpaling Trader</span>
                     </Link>
                     <div className="tt-card flex w-full max-w-[420px] flex-col gap-6 p-6 sm:p-8">
