@@ -4,6 +4,7 @@
  * Dates are generated relative to "now" so renewals and expiries always
  * look current. All people and businesses are fictional.
  */
+import { AD_CAMPAIGNS, AD_PACKAGES } from './advertising';
 import { accessEndsAt, planTerm } from './enums';
 import { bps, daysFromNow, EARNING_HOLD_DAYS, hoursAgo, PLATFORM_FEE_BPS } from '../utils/format';
 
@@ -31,6 +32,7 @@ const users = [
     { id: 17, name: 'Ahmad Faizal', email: 'ahmad.faizal@example.test', role: 'customer', status: 'active', created_at: d(-75) },
     { id: 18, name: 'Izzati Roslan', email: 'izzati.roslan@example.test', role: 'customer', status: 'active', created_at: d(-50) },
     { id: 19, name: 'Kevin Ong', email: 'kevin.ong@example.test', role: 'customer', status: 'active', created_at: d(-34) },
+    { id: 20, name: 'Hana Kamal', email: 'advertiser@terpaling.test', role: 'customer', status: 'active', created_at: d(-120) },
 ];
 
 /* ---------------------------------------------------------- Providers */
@@ -508,6 +510,7 @@ export function createSeed() {
     return structuredClone({
         users, providers, categories, services, plans, subscriptions, orders, earnings, payouts,
         contents, files, bookings, reviews, notifications, auditLogs,
+        adPackages: AD_PACKAGES, adCampaigns: AD_CAMPAIGNS,
         settings: { gateway: 'test', environment: 'static-demo' },
         security: {},
     });
@@ -521,4 +524,5 @@ export const DEMO_ACCOUNTS = [
     { email: 'applicant@terpaling.test', label: 'Applicant', description: 'Provider application waiting for review', icon: 'inbox-arrow-down' },
     { email: 'newtrader@terpaling.test', label: 'New trader', description: 'Customer with no purchases yet', icon: 'user-plus' },
     { email: 'newprovider@terpaling.test', label: 'New provider', description: 'Approved provider with no products', icon: 'plus-circle' },
+    { email: 'advertiser@terpaling.test', label: 'Advertiser', description: 'Demo advertiser with active, draft and returned campaigns', icon: 'megaphone' },
 ];

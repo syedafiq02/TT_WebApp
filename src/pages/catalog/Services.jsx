@@ -1,6 +1,8 @@
 /* pages/catalog/index.blade.php — Explore Services */
 import { useEffect, useMemo, useState } from 'react';
 import { ServiceCard } from '../../components/Cards';
+import { SponsoredListingCard } from '../../components/sponsored';
+import { liveAds } from '../../data/advertising';
 import { Button, Empty, Input, Pagination, Select } from '../../components/ui';
 import { SERVICE_TYPES } from '../../data/enums';
 import { children, providerById, publicServices, rating, roots, selfAndChildIds } from '../../data/queries';
@@ -47,6 +49,8 @@ export default function Services() {
     }, [db, q, category, type, sort]);
 
     const { items, pagination } = usePaginated(results, 12);
+    // One clearly labelled sponsored listing, on the first page only.
+    const sponsored = pagination.page === 1 && items.length >= 2 ? liveAds(db, 'sponsored_listing')[0] : null;
 
     const clear = () => {
         setSearch('');
@@ -126,9 +130,13 @@ export default function Services() {
                     ) : (
                         <>
                             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                                {items.map((s) => (
-                                    <ServiceCard key={s.id} service={s} />
+                                {items.map((s, i) => (
+                                    <span key={s.id} className="contents">
+                                        {sponsored && i === 2 && <SponsoredListingCard ad={sponsored} />}
+                                        <ServiceCard service={s} />
+                                    </span>
                                 ))}
+                                {sponsored && items.length === 2 && <SponsoredListingCard ad={sponsored} />}
                             </div>
                             <div className="mt-8">
                                 <Pagination {...pagination} />

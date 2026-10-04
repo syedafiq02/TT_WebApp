@@ -7,7 +7,7 @@ import { useQueryState } from '../../hooks/useQueryState';
 import { useTitle } from '../../hooks/useTitle';
 import { fmtDateTime } from '../../utils/format';
 
-const FILTERS = { provider: 'Providers', service: 'Services', payment: 'Payments', payout: 'Payouts', subscription: 'Subscriptions', user: 'Users', category: 'Categories', review: 'Reviews', content: 'Content' };
+const FILTERS = { provider: 'Providers', service: 'Services', payment: 'Payments', payout: 'Payouts', subscription: 'Subscriptions', user: 'Users', category: 'Categories', review: 'Reviews', content: 'Content', advertising: 'Advertising' };
 
 export default function AuditLogs() {
     useTitle('Audit Logs');

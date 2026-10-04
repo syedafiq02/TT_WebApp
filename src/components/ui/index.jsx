@@ -440,18 +440,22 @@ export function Pagination({ page, total, perPage, onChange }) {
 
 export function Modal({ open, onClose, className, children, labelledBy }) {
     const panel = useRef(null);
+    // Keep the latest onClose without re-running the effect: callers usually pass an
+    // inline function, and re-running would steal focus on every render while typing.
+    const closeRef = useRef(onClose);
+    closeRef.current = onClose;
     useEffect(() => {
         if (!open) return;
-        const onKey = (e) => e.key === 'Escape' && onClose();
+        const onKey = (e) => e.key === 'Escape' && closeRef.current();
         document.addEventListener('keydown', onKey);
         const prev = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
-        panel.current?.querySelector('input,textarea,button')?.focus();
+        (panel.current?.querySelector('input:not([type=hidden]),select,textarea') ?? panel.current?.querySelector('button'))?.focus();
         return () => {
             document.removeEventListener('keydown', onKey);
             document.body.style.overflow = prev;
         };
-    }, [open, onClose]);
+    }, [open]);
     if (!open) return null;
     return createPortal(
         <div className="fixed inset-0 z-[60] grid place-items-center overflow-y-auto p-4">

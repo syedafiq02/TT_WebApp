@@ -68,6 +68,13 @@ const AdminReviews = lazy(() => import('./pages/admin/Reviews'));
 const AdminModeration = lazy(() => import('./pages/admin/Moderation'));
 const AdminSettings = lazy(() => import('./pages/admin/Settings'));
 const AdminAuditLogs = lazy(() => import('./pages/admin/AuditLogs'));
+const AdminAdvertising = lazy(() => import('./pages/admin/Advertising'));
+const AdminAdvertisingCampaign = lazy(() => import('./pages/admin/AdvertisingCampaign'));
+
+const Advertise = lazy(() => import('./pages/advertising/Advertise'));
+const AdApply = lazy(() => import('./pages/advertising/AdApply'));
+const AdDashboard = lazy(() => import('./pages/advertising/AdDashboard'));
+const AdCampaignDetail = lazy(() => import('./pages/advertising/AdCampaignDetail'));
 
 function Loading() {
     return (
@@ -89,6 +96,7 @@ export default function App() {
                     <Route path="services/:slug" element={<CatalogShow />} />
                     <Route path="providers" element={<CatalogProviders />} />
                     <Route path="providers/:slug" element={<CatalogProvider />} />
+                    <Route path="advertise" element={<Advertise />} />
                     <Route element={<RequireAuth />}>
                         <Route path="checkout/:planId" element={<Checkout />} />
                         <Route path="payments/test/:planId" element={<TestPayment />} />
@@ -124,6 +132,9 @@ export default function App() {
                         <Route path="settings/profile" element={<SettingsProfile />} />
                         <Route path="settings/security" element={<SettingsSecurity />} />
                         <Route path="provider/apply" element={<ProviderApply />} />
+                        <Route path="advertise/apply" element={<AdApply />} />
+                        <Route path="dashboard/advertising" element={<AdDashboard />} />
+                        <Route path="dashboard/advertising/:reference" element={<AdCampaignDetail />} />
                     </Route>
 
                     {/* Provider dashboard */}
@@ -161,6 +172,8 @@ export default function App() {
                             <Route path="admin/moderation" element={<AdminModeration />} />
                             <Route path="admin/settings" element={<AdminSettings />} />
                             <Route path="admin/audit-logs" element={<AdminAuditLogs />} />
+                            <Route path="admin/advertising" element={<AdminAdvertising />} />
+                            <Route path="admin/advertising/:reference" element={<AdminAdvertisingCampaign />} />
                         </Route>
                     </Route>
                 </Route>

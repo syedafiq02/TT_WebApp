@@ -1,5 +1,7 @@
 /* pages/catalog/providers.blade.php */
 import { ProviderCard } from '../../components/Cards';
+import { FeaturedBrandCard } from '../../components/sponsored';
+import { liveAds } from '../../data/advertising';
 import { Button, Empty } from '../../components/ui';
 import { useStore } from '../../data/store';
 import { useTitle } from '../../hooks/useTitle';
@@ -7,6 +9,7 @@ import { useTitle } from '../../hooks/useTitle';
 export default function Providers() {
     useTitle('Providers');
     const { db } = useStore();
+    const brand = liveAds(db, 'featured_brand')[0];
     const providers = db.providers.filter((p) => p.status === 'approved').sort((a, b) => a.display_name.localeCompare(b.display_name));
 
     return (
@@ -39,6 +42,7 @@ export default function Providers() {
                         ))}
                     </div>
                 )}
+                {brand && <FeaturedBrandCard ad={brand} className="mt-10" />}
             </section>
         </div>
     );

@@ -6,6 +6,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AiSupportWidget } from '../components/AiSupportWidget';
+import { SponsoredBanner } from '../components/sponsored';
+import { liveAds } from '../data/advertising';
 import { planTermLabel, typeLabel } from '../data/enums';
 import { categoryById, children, cheapestPlan, providerById, providerServices, publicServices, rating, roots } from '../data/queries';
 import { useStore } from '../data/store';
@@ -96,6 +98,8 @@ export default function Landing() {
         .sort((a, b) => new Date(b.approved_at) - new Date(a.approved_at))
         .slice(0, 4);
 
+    const banner = liveAds(db, 'featured_banner')[0];
+
     const closeMenu = useCallback(() => {
         setMenuOpen(false);
         document.body.style.overflow = '';
@@ -172,6 +176,7 @@ export default function Landing() {
                         {navBtn('providers', 'Providers')}
                         {navBtn('how', 'How It Works')}
                         {navBtn('about', 'About')}
+                        <Link to="/advertise">Advertise</Link>
                     </nav>
                     <div className="nav-right">
                         <Link className="nav-provider hide-m" to="/provider/apply">
@@ -218,6 +223,10 @@ export default function Landing() {
                 </button>
                 <Link className="ml" to="/provider/apply" onClick={closeMenu}>
                     Become a Provider
+                    <I n="chev" />
+                </Link>
+                <Link className="ml" to="/advertise" onClick={closeMenu}>
+                    Advertise
                     <I n="chev" />
                 </Link>
                 <div className="btns">
@@ -486,6 +495,15 @@ export default function Landing() {
                         </div>
                     </div>
                 </section>
+
+                {/* Sponsored: one featured banner, only while a paid campaign is active */}
+                {banner && (
+                    <section className="section" aria-label="Sponsored" style={{ paddingBlock: 0 }}>
+                        <div className="wrap">
+                            <SponsoredBanner ad={banner} />
+                        </div>
+                    </section>
+                )}
 
                 {/* 06 CURATED PROVIDERS */}
                 <section className="section" id="providers" aria-labelledby="providers-title">
@@ -930,6 +948,11 @@ export default function Landing() {
                                 </li>
                                 <li>
                                     <button onClick={() => scrollTo('how')}>How It Works</button>
+                                </li>
+                                <li>
+                                    <Link to="/advertise" style={{ color: 'var(--fg-2)', fontSize: 14 }}>
+                                        Advertise
+                                    </Link>
                                 </li>
                             </ul>
                         </div>

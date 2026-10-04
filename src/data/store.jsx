@@ -6,6 +6,7 @@
  * messages the Laravel actions use.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { AD_CAMPAIGN_STATUSES, addDays } from './advertising';
 import { accessEndsAt, allowedBillingTypes, contentEntitlement, planTerm, typeLabel } from './enums';
 import { activePlans, canAccessProvider, hasAnyAccess, planById, providerForUser, serviceById, userOf } from './queries';
 import { createSeed } from './seed';
@@ -43,7 +44,13 @@ const fail = (message) => {
 const StoreContext = createContext(null);
 
 export function StoreProvider({ children }) {
-    const [db, setDb] = useState(() => load(DB_KEY, createSeed));
+    // Collections added after a browser saved its demo data (e.g. advertising) are filled in from the seed.
+    const [db, setDb] = useState(() => {
+        const seed = createSeed();
+        const saved = load(DB_KEY, () => seed);
+        const users = [...saved.users, ...seed.users.filter((u) => !saved.users.some((x) => x.id === u.id))];
+        return { ...seed, ...saved, users };
+    });
     const [userId, setUserId] = useState(() => load(USER_KEY, () => null));
 
     useEffect(() => save(DB_KEY, db), [db]);
@@ -349,6 +356,121 @@ export function StoreProvider({ children }) {
                     d.payouts.push({ id, provider_id: p.id, amount_minor: total, currency: 'MYR', status: 'requested', reference: null, requested_at: now(), processed_at: null });
                     available.forEach((e) => (e.payout_id = id));
                     audit(d, 'payout.requested', 'Payout', id, { amount_minor: total });
+                });
+            },
+
+            /* -------------------------------------------- Advertising */
+            /** Advertiser: save a draft or submit an application (new or existing). */
+            saveAdApplication(id, data, submit) {
+                return run((d) => {
+                    const pkg = d.adPackages.find((p) => p.id === Number(data.package_id));
+                    const fields = {
+                        ...data,
+                        package_id: pkg.id,
+                        price_minor: pkg.price_minor,
+                        duration_days: Number(data.duration_days),
+                        start_date: new Date(data.start_date).toISOString(),
+                        end_date: addDays(data.start_date, data.duration_days),
+                        updated_at: now(),
+                    };
+                    let c = id ? d.adCampaigns.find((x) => x.id === id) : null;
+                    if (c) {
+                        if (c.user_id !== userId) fail('You can only edit your own applications.');
+                        if (!['draft', 'changes_requested'].includes(c.status)) fail('This application can no longer be edited.');
+                        Object.assign(c, fields);
+                    } else {
+                        const newId = nextId(d.adCampaigns);
+                        const stamp = new Date();
+                        c = {
+                            id: newId, user_id: userId,
+                            reference: `AD-${String(stamp.getFullYear()).slice(2)}${String(stamp.getMonth() + 1).padStart(2, '0')}-${String(newId).padStart(4, '0')}`,
+                            status: 'draft', payment_status: 'not_required', accent: '#2563eb', created_at: now(), history: [],
+                            review_notes: null, rejection_reason: null, change_request: null, ...fields,
+                        };
+                        d.adCampaigns.push(c);
+                    }
+                    if (submit) {
+                        c.status = 'pending_review';
+                        c.change_request = null;
+                        c.history.push({ at: now(), status: 'pending_review', note: c.history.length ? 'Application resubmitted' : 'Application submitted', by: userId });
+                        audit(d, 'advertising.submitted', 'AdCampaign', c.id, { reference: c.reference });
+                    } else if (!c.history.length) {
+                        c.history.push({ at: now(), status: 'draft', note: 'Draft saved', by: userId });
+                    }
+                    return c.reference;
+                });
+            },
+            withdrawAd(campaignId) {
+                run((d) => {
+                    const c = d.adCampaigns.find((x) => x.id === campaignId);
+                    if (!['draft', 'pending_review', 'changes_requested', 'approved'].includes(c.status)) fail('This campaign can no longer be withdrawn. Contact the platform team.');
+                    c.status = 'cancelled';
+                    c.updated_at = now();
+                    c.history.push({ at: now(), status: 'cancelled', note: 'Withdrawn by the advertiser', by: userId });
+                });
+            },
+            /** Admin: approve / reject / request changes on an application. */
+            reviewAd(campaignId, decision, note) {
+                run((d) => {
+                    const c = d.adCampaigns.find((x) => x.id === campaignId);
+                    if (!['pending_review', 'changes_requested'].includes(c.status)) fail('Only applications awaiting review can be decided.');
+                    if (decision !== 'approved' && !note?.trim()) fail(decision === 'rejected' ? 'Give a reason for the rejection.' : 'Describe the changes the advertiser should make.');
+                    c.status = decision;
+                    c.updated_at = now();
+                    if (decision === 'approved') {
+                        c.review_notes = note || null;
+                        c.payment_status = c.price_minor > 0 ? 'awaiting_payment' : 'not_required';
+                    }
+                    if (decision === 'rejected') c.rejection_reason = note;
+                    if (decision === 'changes_requested') c.change_request = note;
+                    c.history.push({ at: now(), status: decision, note: note || null, by: userId });
+                    const titles = { approved: 'Advertising application approved', rejected: 'Advertising application not approved', changes_requested: 'Changes requested on your ad' };
+                    notify(d, c.user_id, decision === 'rejected' ? 'x-circle' : 'megaphone', titles[decision], `${c.company} · ${c.reference}${note ? `: ${note}` : ''}`, `/dashboard/advertising/${c.reference}`);
+                    audit(d, `advertising.${decision}`, 'AdCampaign', c.id, note ? { note } : null);
+                });
+            },
+            /** Admin: edit campaign details (placement, package, price, dates, copy). */
+            updateAdCampaign(campaignId, patch) {
+                run((d) => {
+                    const c = d.adCampaigns.find((x) => x.id === campaignId);
+                    if (patch.start_date && patch.end_date && new Date(patch.end_date) <= new Date(patch.start_date)) fail('The end date must be after the start date.');
+                    Object.assign(c, patch, { updated_at: now() });
+                    audit(d, 'advertising.updated', 'AdCampaign', c.id, { fields: Object.keys(patch) });
+                });
+            },
+            setAdStatus(campaignId, status, note) {
+                run((d) => {
+                    const c = d.adCampaigns.find((x) => x.id === campaignId);
+                    if (['scheduled', 'active'].includes(status) && !['paid', 'not_required'].includes(c.payment_status)) fail('Record the payment before scheduling or activating this campaign.');
+                    if (['scheduled', 'active', 'completed'].includes(status) && !AD_CAMPAIGN_STATUSES.includes(c.status)) fail('Approve the application before changing its campaign status.');
+                    c.status = status;
+                    c.updated_at = now();
+                    c.history.push({ at: now(), status, note: note || null, by: userId });
+                    notify(d, c.user_id, 'megaphone', `Campaign ${status}`, `${c.company} · ${c.reference} is now ${status}.`, `/dashboard/advertising/${c.reference}`);
+                    audit(d, `advertising.${status}`, 'AdCampaign', c.id);
+                });
+            },
+            setAdPayment(campaignId, payment) {
+                run((d) => {
+                    const c = d.adCampaigns.find((x) => x.id === campaignId);
+                    c.payment_status = payment;
+                    c.updated_at = now();
+                    c.history.push({ at: now(), status: c.status, note: `Payment status set to ${payment.replace(/_/g, ' ')} (demo).`, by: userId });
+                    audit(d, 'advertising.payment_updated', 'AdCampaign', c.id, { payment_status: payment });
+                });
+            },
+            saveAdPackage(pkg) {
+                run((d) => {
+                    if (pkg.id) Object.assign(d.adPackages.find((p) => p.id === pkg.id), pkg);
+                    else d.adPackages.push({ ...pkg, id: nextId(d.adPackages), is_active: true, highlighted: false });
+                    audit(d, pkg.id ? 'advertising.package_updated' : 'advertising.package_created', 'AdPackage', pkg.id ?? null, { name: pkg.name });
+                });
+            },
+            toggleAdPackage(packageId) {
+                run((d) => {
+                    const p = d.adPackages.find((x) => x.id === packageId);
+                    p.is_active = !p.is_active;
+                    audit(d, p.is_active ? 'advertising.package_activated' : 'advertising.package_deactivated', 'AdPackage', p.id);
                 });
             },
 

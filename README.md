@@ -30,6 +30,7 @@ On `/login`, choose one of the demo accounts (any password works):
 | `applicant@terpaling.test` | Pending provider application |
 | `newtrader@terpaling.test` | Customer with no purchases (empty states) |
 | `newprovider@terpaling.test` | Approved provider with no products |
+| `advertiser@terpaling.test` | Advertiser with active, completed, draft and returned campaigns |
 
 Changes you make (checkouts, approvals, uploads and so on) are saved in your browser's `localStorage`. To restore the original data, open the user menu and choose **Reset demo data**.
 
@@ -59,6 +60,22 @@ src/
     ├── landing.css       original landing CSS, scoped to .lp at build time (vite.config.js)
     └── ai-support.css    original widget CSS
 ```
+
+## Advertising module
+
+Businesses can buy clearly labelled sponsored placements (not an investment, no guaranteed results).
+
+| Route | Purpose |
+|---|---|
+| `/advertise` | Public page: why advertise, the four placements, illustrative packages |
+| `/advertise/apply` | Application form (sign-in required); accepts `?package=`, `?placement=`, `?edit=AD-…` |
+| `/dashboard/advertising` | Advertiser dashboard; `/dashboard/advertising/:reference` for one campaign |
+| `/admin/advertising` | Admin: overview, applications, campaigns, packages; `/admin/advertising/:reference` to review and manage |
+
+- Data: `src/data/advertising.js` (placements, statuses, packages, mock campaigns); actions in `src/data/store.jsx`.
+- Reusable placements in `src/components/sponsored/`: `SponsoredBanner`, `SponsoredListingCard`, `FeaturedBrandCard`, `SponsoredAnnouncement` (data via props, always labelled "Sponsored").
+- Live placements appear only for active, paid campaigns within their dates: landing (banner), Explore Services (one listing), Providers (featured brand), trader overview (announcement).
+- Package prices are illustrative draft pricing subject to administrator approval. Payments, invoices, creative uploads and ad delivery are simulated.
 
 ## What is simulated
 

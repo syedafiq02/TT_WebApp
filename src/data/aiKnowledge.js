@@ -69,6 +69,12 @@ Browse everything at [Explore](/services). Each plan is a **Subscription** (rene
         answer: 'Any signed-in user can apply at [Become a Provider](/provider/apply). The Terpaling team reviews every application; approved providers get a Provider dashboard to create products, plans and files. Each product is reviewed again before it is published.',
     },
     {
+        keywords: ['advertis', 'sponsor', 'iklan', 'banner', 'promote', 'campaign', 'ad placement', 'ads '],
+        answer: `Businesses can promote trading-related products and services through clearly labelled sponsored placements. See placements and illustrative packages on [Advertise](/advertise), apply from [Start advertising](/advertise/apply), and follow each campaign in [Advertising](/dashboard/advertising).
+
+Every application and creative is reviewed first. Advertising buys placement only: it is not an investment and does not guarantee impressions, clicks or results. In this demo, prices are illustrative and no payment is taken.`,
+    },
+    {
         keywords: ['profit', 'untung', 'guarantee', 'jamin', 'accuracy', 'win rate', 'should i buy', 'recommend', 'advice', 'nasihat'],
         answer: 'Trading involves risk. Services on the platform are educational and analytical, are **not a guarantee of trading results** and are not personalised investment advice. I can explain how products and plans work, but I can\'t recommend trades or tell you which product will be profitable.',
     },

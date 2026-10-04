@@ -38,6 +38,9 @@ export default function PublicLayout() {
                         <Link to="/#about" className={navCls(false)}>
                             About
                         </Link>
+                        <Link to="/advertise" className={navCls(pathname.startsWith('/advertise'))}>
+                            Advertise
+                        </Link>
                     </nav>
                     <div className="ml-auto hidden items-center gap-2 lg:flex">
                         <Link to="/provider/apply" className="rounded-lg px-3 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900">
@@ -71,6 +74,7 @@ export default function PublicLayout() {
                                 ['/providers', 'Providers'],
                                 ['/#how', 'How It Works'],
                                 ['/provider/apply', 'Become a Provider'],
+                                ['/advertise', 'Advertise'],
                             ].map(([to, label]) => (
                                 <Link key={to} to={to} className={mobileLink}>
                                     {label} <Icon name="chevron-right" variant="micro" className="text-zinc-400" />
@@ -112,6 +116,9 @@ export default function PublicLayout() {
                             </Link>
                             <Link to="/provider/apply" className="transition-colors hover:text-brand">
                                 Become a Provider
+                            </Link>
+                            <Link to="/advertise" className="transition-colors hover:text-brand">
+                                Advertise
                             </Link>
                         </nav>
                     </div>

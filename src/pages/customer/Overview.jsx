@@ -1,6 +1,8 @@
 /* pages/customer/overview.blade.php — "My trading hub" */
 import { Link } from 'react-router-dom';
+import { SponsoredAnnouncement } from '../../components/sponsored';
 import { Button, Empty, Icon, PageHeader, Stat, Status } from '../../components/ui';
+import { liveAds } from '../../data/advertising';
 import { subscriptionStatus, typeIcon, typeLabel } from '../../data/enums';
 import { isCurrentlyActive, planById, providerById, serviceById, sortByDesc } from '../../data/queries';
 import { useStore } from '../../data/store';
@@ -15,6 +17,7 @@ export default function Overview() {
     const soon = Date.now() + 30 * 86400000;
     const renewals = active.filter((s) => s.expires_at && new Date(s.expires_at) <= soon).sort((a, b) => new Date(a.expires_at) - new Date(b.expires_at));
     const total = mine.filter((s) => s.status !== 'pending').length;
+    const announcement = liveAds(db, 'sponsored_announcement')[0];
     const notifications = sortByDesc(db.notifications.filter((n) => n.user_id === user.id), 'created_at').slice(0, 5);
 
     return (
@@ -150,6 +153,8 @@ export default function Overview() {
                             ))
                         )}
                     </section>
+
+                    {announcement && <SponsoredAnnouncement ad={announcement} />}
                 </div>
             </div>
         </div>
