@@ -1,0 +1,714 @@
+/*
+ * Terpaling AI Support widget.
+ * Plain, fully scoped CSS (no Tailwind preflight) so the widget looks the same
+ * in the app layouts and on the standalone landing page. Colours mirror the
+ * light brand tokens in resources/css/app.css.
+ */
+.tt-ai {
+    --ai-canvas: #f8fafc;
+    --ai-surface: #ffffff;
+    --ai-surface-2: #f8fafc;
+    --ai-surface-3: #f1f5f9;
+    --ai-line: #e2e8f0;
+    --ai-line-2: #cbd5e1;
+    --ai-fg: #0f172a;
+    --ai-fg-2: #334155;
+    --ai-muted: #64748b;
+    --ai-dim: #94a3b8;
+    --ai-brand: #2563eb;
+    --ai-brand-hi: #1d4ed8;
+    --ai-brand-ink: #ffffff;
+    --ai-gold: #d97706;
+    --ai-danger: #dc2626;
+    --ai-radius: 16px;
+    --ai-font: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --ai-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+    position: fixed;
+    right: max(20px, env(safe-area-inset-right, 0px));
+    bottom: max(20px, env(safe-area-inset-bottom, 0px));
+    z-index: 55;
+    font-family: var(--ai-font);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ai-fg);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Above sticky page headers (the landing nav uses z-index 60) while the chat is open. */
+.tt-ai.is-open {
+    z-index: 1000;
+}
+
+.tt-ai *,
+.tt-ai *::before,
+.tt-ai *::after {
+    box-sizing: border-box;
+}
+
+.tt-ai [hidden] {
+    display: none !important;
+}
+
+.tt-ai-sr {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.tt-ai svg.tt-ai-icon {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    display: block;
+}
+
+.tt-ai svg.tt-ai-icon--inline {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: -3px;
+    margin-right: 4px;
+}
+
+.tt-ai button,
+.tt-ai textarea,
+.tt-ai a {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+}
+
+.tt-ai button {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+}
+
+.tt-ai :focus-visible {
+    outline: 2px solid var(--ai-brand-hi);
+    outline-offset: 2px;
+}
+
+/* Launcher ------------------------------------------------------------- */
+
+.tt-ai .tt-ai-launcher {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    background: var(--ai-brand);
+    color: var(--ai-brand-ink);
+    border: 1px solid rgba(37, 99, 235, 0.6);
+    box-shadow: 0 12px 32px -12px rgba(37, 99, 235, 0.45), 0 4px 14px -4px rgba(15, 23, 42, 0.12);
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.tt-ai .tt-ai-launcher:hover {
+    background: var(--ai-brand-hi);
+    transform: translateY(-1px);
+}
+
+.tt-ai .tt-ai-launcher svg.tt-ai-icon {
+    width: 26px;
+    height: 26px;
+}
+
+.tt-ai .tt-ai-launcher-close,
+.tt-ai.is-open .tt-ai-launcher-open {
+    display: none;
+}
+
+.tt-ai.is-open .tt-ai-launcher-close {
+    display: block;
+}
+
+.tt-ai .tt-ai-dot {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 13px;
+    height: 13px;
+    border-radius: 999px;
+    background: var(--ai-gold);
+    border: 2px solid var(--ai-canvas);
+}
+
+/* Panel ---------------------------------------------------------------- */
+
+.tt-ai .tt-ai-panel {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    width: min(400px, calc(100vw - 40px));
+    height: min(640px, calc(100vh - 120px));
+    height: min(640px, calc(100dvh - 120px));
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--ai-surface);
+    border: 1px solid var(--ai-line-2);
+    border-radius: var(--ai-radius);
+    box-shadow: 0 30px 70px -20px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(15, 23, 42, 0.04);
+    animation: tt-ai-rise 0.18s ease both;
+}
+
+@keyframes tt-ai-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+.tt-ai .tt-ai-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 12px 14px 16px;
+    border-bottom: 1px solid var(--ai-line);
+    background: var(--ai-surface-2);
+}
+
+.tt-ai .tt-ai-avatar {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 10px;
+    color: var(--ai-brand-hi);
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.tt-ai .tt-ai-heading {
+    flex: 1;
+    min-width: 0;
+}
+
+.tt-ai .tt-ai-title {
+    margin: 0;
+    font-family: var(--ai-display);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--ai-fg);
+}
+
+.tt-ai .tt-ai-status {
+    margin: 2px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ai-muted);
+}
+
+.tt-ai .tt-ai-status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ai-brand-hi);
+}
+
+.tt-ai .tt-ai-status-dot.is-off {
+    background: var(--ai-dim);
+}
+
+.tt-ai .tt-ai-iconbtn {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 8px;
+    color: var(--ai-muted);
+}
+
+.tt-ai .tt-ai-iconbtn:hover {
+    color: var(--ai-fg);
+    background: var(--ai-surface-3);
+}
+
+.tt-ai .tt-ai-iconbtn svg.tt-ai-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Body / messages ------------------------------------------------------ */
+
+.tt-ai .tt-ai-body {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--ai-canvas);
+}
+
+.tt-ai .tt-ai-log {
+    flex: 1;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ai-line-2) transparent;
+}
+
+.tt-ai .tt-ai-log > div:empty {
+    display: none;
+}
+
+.tt-ai [data-tt-ai-messages] {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tt-ai .tt-ai-welcome {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.tt-ai .tt-ai-msg {
+    display: flex;
+    flex-direction: column;
+    max-width: 88%;
+}
+
+.tt-ai .tt-ai-msg--assistant {
+    align-self: flex-start;
+}
+
+.tt-ai .tt-ai-msg--user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.tt-ai .tt-ai-bubble {
+    padding: 10px 13px;
+    border-radius: 14px;
+    overflow-wrap: anywhere;
+}
+
+.tt-ai .tt-ai-msg--assistant .tt-ai-bubble {
+    background: var(--ai-surface-2);
+    border: 1px solid var(--ai-line);
+    border-top-left-radius: 4px;
+    color: var(--ai-fg-2);
+}
+
+.tt-ai .tt-ai-msg--user .tt-ai-bubble {
+    background: var(--ai-brand);
+    color: var(--ai-brand-ink);
+    border-top-right-radius: 4px;
+    white-space: pre-wrap;
+}
+
+.tt-ai .tt-ai-msg.is-failed .tt-ai-bubble {
+    opacity: 0.6;
+}
+
+.tt-ai .tt-ai-bubble p,
+.tt-ai .tt-ai-bubble ul,
+.tt-ai .tt-ai-bubble ol {
+    margin: 0 0 8px;
+}
+
+.tt-ai .tt-ai-bubble > :last-child {
+    margin-bottom: 0;
+}
+
+.tt-ai .tt-ai-bubble ul,
+.tt-ai .tt-ai-bubble ol {
+    padding-left: 20px;
+}
+
+/* Restore markers removed by the app's Tailwind preflight. */
+.tt-ai .tt-ai-bubble ul {
+    list-style: disc;
+}
+
+.tt-ai .tt-ai-bubble ol {
+    list-style: decimal;
+}
+
+.tt-ai .tt-ai-bubble li {
+    margin: 2px 0;
+}
+
+.tt-ai .tt-ai-bubble strong {
+    color: var(--ai-fg);
+    font-weight: 600;
+}
+
+.tt-ai .tt-ai-bubble a {
+    color: var(--ai-brand-hi);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.tt-ai .tt-ai-bubble code {
+    font-family: ui-monospace, monospace;
+    font-size: 12.5px;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: var(--ai-surface-3);
+}
+
+.tt-ai .tt-ai-time {
+    margin-top: 4px;
+    padding: 0 4px;
+    font-variant-numeric: tabular-nums;
+    font-size: 10.5px;
+    color: var(--ai-dim);
+}
+
+.tt-ai .tt-ai-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tt-ai .tt-ai-chip {
+    padding: 7px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--ai-line-2);
+    background: var(--ai-surface);
+    color: var(--ai-fg-2);
+    font-size: 13px;
+    line-height: 1.2;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.tt-ai .tt-ai-chip:hover {
+    border-color: var(--ai-brand);
+    color: var(--ai-brand-hi);
+}
+
+.tt-ai .tt-ai-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tt-ai .tt-ai-typing {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 14px;
+}
+
+.tt-ai .tt-ai-typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--ai-muted);
+    animation: tt-ai-blink 1.2s infinite ease-in-out;
+}
+
+.tt-ai .tt-ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+.tt-ai .tt-ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes tt-ai-blink {
+    0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-2px); }
+}
+
+/* History -------------------------------------------------------------- */
+
+.tt-ai .tt-ai-history {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--ai-canvas);
+}
+
+.tt-ai .tt-ai-history-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--ai-line);
+}
+
+.tt-ai .tt-ai-history-title {
+    margin: 0;
+    font-family: var(--ai-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ai-fg);
+}
+
+.tt-ai .tt-ai-history-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tt-ai .tt-ai-history-item {
+    display: grid;
+    gap: 2px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+}
+
+.tt-ai .tt-ai-history-item:hover,
+.tt-ai .tt-ai-history-item[aria-current='true'] {
+    background: var(--ai-surface-2);
+}
+
+.tt-ai .tt-ai-history-item b {
+    font-weight: 500;
+    color: var(--ai-fg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.tt-ai .tt-ai-history-item span,
+.tt-ai .tt-ai-history-empty {
+    font-size: 12px;
+    color: var(--ai-dim);
+}
+
+.tt-ai .tt-ai-history-empty {
+    padding: 16px 12px;
+}
+
+/* Footer / input ------------------------------------------------------- */
+
+.tt-ai .tt-ai-footer {
+    padding: 12px 12px 10px;
+    border-top: 1px solid var(--ai-line);
+    background: var(--ai-surface);
+}
+
+.tt-ai .tt-ai-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid #fecaca;
+    background: #fef2f2;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+.tt-ai .tt-ai-alert > span {
+    flex: 1;
+}
+
+.tt-ai .tt-ai-retry {
+    flex: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+.tt-ai .tt-ai-retry:hover {
+    background: #fee2e2;
+}
+
+.tt-ai .tt-ai-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 6px 6px 6px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--ai-line-2);
+    background: var(--ai-canvas);
+}
+
+.tt-ai .tt-ai-form:focus-within {
+    border-color: var(--ai-brand);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.tt-ai .tt-ai-input {
+    flex: 1;
+    min-height: 24px;
+    max-height: 144px;
+    padding: 6px 0;
+    overflow-y: hidden;
+    resize: none;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--ai-fg);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.tt-ai .tt-ai-input::placeholder {
+    color: var(--ai-dim);
+}
+
+.tt-ai .tt-ai-input:focus-visible {
+    outline: none;
+}
+
+.tt-ai .tt-ai-send {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 9px;
+    background: var(--ai-brand);
+    color: var(--ai-brand-ink);
+}
+
+.tt-ai .tt-ai-send:hover {
+    background: var(--ai-brand-hi);
+}
+
+.tt-ai .tt-ai-send:disabled {
+    background: var(--ai-surface-3);
+    color: var(--ai-dim);
+    cursor: not-allowed;
+}
+
+.tt-ai .tt-ai-send svg.tt-ai-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.tt-ai .tt-ai-hint {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 6px 4px 0;
+    font-size: 11px;
+    color: var(--ai-dim);
+}
+
+.tt-ai .tt-ai-hint .is-over {
+    color: var(--ai-danger);
+}
+
+.tt-ai .tt-ai-notice {
+    display: grid;
+    gap: 10px;
+    padding: 4px 2px;
+    color: var(--ai-fg-2);
+    font-size: 13.5px;
+}
+
+.tt-ai .tt-ai-notice p {
+    margin: 0;
+}
+
+.tt-ai .tt-ai-notice-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.tt-ai .tt-ai-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border-radius: 9px;
+    border: 1px solid var(--ai-line-2);
+    color: var(--ai-fg);
+    font-size: 13.5px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.tt-ai .tt-ai-btn:hover {
+    background: var(--ai-surface-3);
+}
+
+.tt-ai .tt-ai-btn--primary {
+    background: var(--ai-brand);
+    border-color: var(--ai-brand);
+    color: var(--ai-brand-ink);
+}
+
+.tt-ai .tt-ai-btn--primary:hover {
+    background: var(--ai-brand-hi);
+}
+
+.tt-ai .tt-ai-disclaimer {
+    margin: 8px 4px 0;
+    font-size: 11px;
+    color: var(--ai-dim);
+    text-align: center;
+}
+
+/* Mobile: near full screen ---------------------------------------------- */
+
+@media (max-width: 640px) {
+    .tt-ai {
+        right: 16px;
+        bottom: max(16px, env(safe-area-inset-bottom, 0px));
+    }
+
+    .tt-ai .tt-ai-launcher {
+        width: 52px;
+        height: 52px;
+    }
+
+    .tt-ai .tt-ai-panel {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        border: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .tt-ai.is-open .tt-ai-launcher {
+        display: none;
+    }
+
+    .tt-ai .tt-ai-msg {
+        max-width: 92%;
+    }
+
+    /* 16px stops iOS zooming into the field. */
+    .tt-ai .tt-ai-input {
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tt-ai .tt-ai-panel,
+    .tt-ai .tt-ai-typing span {
+        animation: none;
+    }
+
+    .tt-ai .tt-ai-launcher,
+    .tt-ai .tt-ai-chip {
+        transition: none;
+    }
+
+    .tt-ai .tt-ai-launcher:hover {
+        transform: none;
+    }
+}
